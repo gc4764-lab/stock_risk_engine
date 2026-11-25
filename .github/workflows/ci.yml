@@ -1,0 +1,19 @@
+name: Stock Risk Engine CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  call_rust_ci:
+    # फॉर्मेट: <owner>/<repo>/.github/workflows/<filename>@<tag-or-branch>
+    uses: gc4764-lab/trading-workflows/.github/workflows/rust-ci-telegram.yml@v1
+    with:
+      project_name: "NIFTY Risk Engine"
+      run_release_build: true
+      notify_on_success: false
+    secrets:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
