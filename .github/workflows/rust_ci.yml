@@ -1,0 +1,51 @@
+name: Rust Stock Risk Engine CI
+
+# 1. Event: यह पाइपलाइन कब चलेगी?
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+# सभी Jobs के लिए Environment Variable
+env:
+  CARGO_TERM_COLOR: always
+
+# 2. Jobs: क्या-क्या काम करने हैं?
+jobs:
+  test_and_verify:
+    name: Format, Lint & Test
+    # 3. Runner: कौन-सी मशीन इस्तेमाल होगी?
+    runs-on: ubuntu-latest
+
+    # 4. Steps: एक के बाद एक चलने वाले काम
+    steps:
+      # Step 1: रिपॉजिटरी का कोड Runner पर डाउनलोड करना
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      # Step 2: Rust toolchain (rustc, cargo, rustfmt, clippy) सेटअप करना
+      - name: Install Rust stable toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      # Step 3: Cargo dependencies को cache करना ताकि अगली बार बिल्ड तेज़ हो
+      - name: Cache Cargo dependencies
+        uses: Swatinem/rust-cache@v2
+
+      # Step 4: कोड की फॉर्मेटिंग जांचना
+      - name: Check code formatting
+        run: cargo fmt --all -- --check
+
+      # Step 5: संभावित बग्स और खराब पैटर्न पकड़ना (Warnings को Error मानकर)
+      - name: Run Clippy linter
+        run: cargo clippy --all-targets -- -D warnings
+
+      # Step 6: सारे स्टॉक रिस्क यूनिट टेस्ट चलाना
+      - name: Run unit tests
+        run: cargo test --verbose
+
+      # Step 7: प्रोडक्शन के लिए Release Build चेक करना
+      - name: Build release binary
+        run: cargo build --release --verbose
