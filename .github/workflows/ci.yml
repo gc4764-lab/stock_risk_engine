@@ -9,7 +9,7 @@ on:
 jobs:
   call_rust_ci:
     # फॉर्मेट: <owner>/<repo>/.github/workflows/<filename>@<tag-or-branch>
-    uses: gc4764-lab/trading-workflows/.github/workflows/rust-ci-telegram.yml@v1
+    uses: gc4764-lab/trading-workflows/.github/workflows/rust-ci-telegram.yml@main
     with:
       project_name: "NIFTY Risk Engine"
       run_release_build: true
